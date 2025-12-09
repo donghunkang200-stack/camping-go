@@ -9,9 +9,11 @@ export default function App() {
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${
       import.meta.env.VITE_KAKAO_JS_KEY
     }&libraries=services&autoload=false`;
+
     script.onload = () => {
       window.kakao.maps.load(() => {
         // map init
+        console.log("Kakao Map SDK Loaded");
       });
     };
     document.head.appendChild(script);
