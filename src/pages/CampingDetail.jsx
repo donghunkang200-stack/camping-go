@@ -21,7 +21,7 @@ export default function CampingDetail() {
   const previousClickedMarkerRef = useRef(null);
 
   const markerIcons = {
-    campMain: "../../public/campingsite.png",
+    campMain: "/campingsite.png",
     nearby: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
     recommend: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
     selected: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
