@@ -5,11 +5,18 @@ import { useEffect } from "react";
 
 export default function App() {
   useEffect(() => {
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init(import.meta.env.REACT_APP_KAKAO_JS_KEY);
-      console.log("Kakao SDK Initialized");
-    }
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${
+      import.meta.env.VITE_KAKAO_JS_KEY
+    }&libraries=services&autoload=false`;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        // map init
+      });
+    };
+    document.head.appendChild(script);
   }, []);
+
   return (
     <Router>
       <Routes>
