@@ -11,34 +11,50 @@ app.use(express.json());
 
 const BASE_URL = "https://apis.data.go.kr/B551011/GoCamping";
 
+let cache = []; // 전체 데이터 캐싱
+let lastFetchTime = 0; // 캐시 유효시간 체크
+const CACHE_DURATION = 1000 * 60 * 30; // 30분
+
 /* ---------------------------------------------------
-    1) 전체 캠핑장 목록 (basedList)
+    공통: 전체 목록 로드 함수 (캐싱)
 ---------------------------------------------------- */
-app.get("/api/camping/all", async (req, res) => {
+async function loadCampingData() {
+  const now = Date.now();
+
+  // 30분 이내 캐시 있으면 재사용
+  if (cache.length > 0 && now - lastFetchTime < CACHE_DURATION) {
+    return cache;
+  }
+
   try {
     const response = await axios.get(`${BASE_URL}/basedList`, {
       params: {
         serviceKey: process.env.GOCAMPING_KEY,
         MobileOS: "ETC",
         MobileApp: "CampApp",
-        numOfRows: 9999, // 전체 데이터 조회
+        numOfRows: 9999,
         pageNo: 1,
         _type: "json",
       },
     });
 
-    const result = response.data.response;
+    cache = response.data.response?.body?.items?.item || [];
+    lastFetchTime = now;
 
-    if (!result?.body?.items) {
-      return res.json({ data: [] });
-    }
-
-    const items = result.body.items.item || [];
-    res.json({ data: items });
+    return cache;
   } catch (err) {
-    console.error("ALL API ERROR:", err);
-    res.status(500).json({ error: "전체 목록 조회 실패" });
+    console.error("❌ 전체 데이터 로드 실패:", err);
+    return [];
   }
+}
+
+/* ---------------------------------------------------
+    1) 전체 캠핑장 목록 (basedList)
+---------------------------------------------------- */
+
+app.get("/api/camping/all", async (req, res) => {
+  const data = await loadCampingData();
+  res.json(data);
 });
 
 /* ---------------------------------------------------
@@ -65,12 +81,7 @@ app.get("/api/camping/search", async (req, res) => {
     });
 
     const result = response.data.response;
-
-    if (!result?.body?.items) {
-      return res.json({ data: [] });
-    }
-
-    const items = result.body.items.item || [];
+    const items = result?.body?.items?.item || [];
 
     res.json({ data: items });
   } catch (err) {
@@ -79,66 +90,40 @@ app.get("/api/camping/search", async (req, res) => {
   }
 });
 
-// Express 백엔드 상세 API (전체 목록에서 contentId로 검색)
+/* ---------------------------------------------------
+    3) 상세 조회
+---------------------------------------------------- */
 app.get("/api/camping/detail/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
+  const id = req.params.id;
 
-    // 전체 데이터 요청
-    const response = await axios.get(`${BASE_URL}/basedList`, {
-      params: {
-        serviceKey: process.env.GOCAMPING_KEY,
-        MobileOS: "ETC",
-        MobileApp: "CampApp",
-        numOfRows: 9999,
-        pageNo: 1,
-        _type: "json",
-      },
-    });
+  const all = await loadCampingData();
+  const detail = all.find((camp) => String(camp.contentId) === id);
 
-    const items = response.data.response?.body?.items?.item || [];
-
-    // contentId에 매칭
-    const detail = items.find((camp) => String(camp.contentId) === id);
-
-    res.json({ data: detail || null });
-  } catch (err) {
-    console.error("DETAIL API ERROR:", err);
-    res.status(500).json({ error: "상세정보 API 실패" });
-  }
+  res.json({ data: detail || null });
 });
 
+/* ---------------------------------------------------
+    4) 좌표 기반 주변 캠핑장 조회
+---------------------------------------------------- */
 app.get("/api/camping/nearby", async (req, res) => {
-  const { lat, lng, distance } = req.query;
-
-  if (!lat || !lng) {
-    return res
-      .status(400)
-      .json({ message: "위도(lat), 경도(lng)가 필요합니다." });
-  }
-
-  const targetLat = Number(lat);
-  const targetLng = Number(lng);
-  const maxDistance = distance ? Number(distance) : 10; // 기본 10km
-
   try {
-    // GoCamping 전체 데이터
-    const response = await axios.get(`${BASE_URL}/basedList`, {
-      params: {
-        serviceKey: process.env.GOCAMPING_KEY,
-        MobileOS: "ETC",
-        MobileApp: "CampApp",
-        numOfRows: 9999,
-        pageNo: 1,
-        _type: "json",
-      },
-    });
+    const { lat, lng, distance } = req.query;
 
-    const items = response.data.response?.body?.items?.item || [];
+    if (!lat || !lng) {
+      return res
+        .status(400)
+        .json({ message: "위도(lat), 경도(lng)가 필요합니다." });
+    }
+
+    const targetLat = Number(lat);
+    const targetLng = Number(lng);
+    const maxDistance = distance ? Number(distance) : 10;
+
+    const all = await loadCampingData();
 
     // 거리 계산 함수
     const calcDistance = (lat1, lng1, lat2, lng2) => {
-      const R = 6371; // 지구 반지름 km
+      const R = 6371;
       const dLat = ((lat2 - lat1) * Math.PI) / 180;
       const dLng = ((lng2 - lng1) * Math.PI) / 180;
 
@@ -149,26 +134,23 @@ app.get("/api/camping/nearby", async (req, res) => {
           Math.sin(dLng / 2) ** 2;
 
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-      return R * c; // km 단위
+      return R * c;
     };
 
-    // 거리 필터링
-    const nearby = items.filter((camp) => {
+    const filtered = all.filter((camp) => {
       if (!camp.mapY || !camp.mapX) return false;
 
       const d = calcDistance(targetLat, targetLng, camp.mapY, camp.mapX);
       return d <= maxDistance;
     });
 
-    // 가까운 순 정렬
-    nearby.sort((a, b) => {
+    filtered.sort((a, b) => {
       const da = calcDistance(targetLat, targetLng, a.mapY, a.mapX);
       const db = calcDistance(targetLat, targetLng, b.mapY, b.mapX);
       return da - db;
     });
 
-    res.json({ data: nearby.slice(0, 5) }); // 5개만 반환
+    res.json({ data: filtered.slice(0, 5) });
   } catch (error) {
     console.error("NEARBY API ERROR:", error);
     res.status(500).json({ error: "주변 캠핑장 조회 실패" });

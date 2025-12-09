@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { getAllCamping } from "../api/campingApi";
 import "./CampingList.css";
 
 export default function CampingList() {
@@ -18,14 +19,15 @@ export default function CampingList() {
   //전체 목록 로딩
   const loadAllCampings = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/camping/all");
-      const data = await res.json();
+      const data = await getAllCamping();
 
-      setAllCampings(data.data);
-      setFilteredCampings(data.data);
+      setAllCampings(data);
+      setFilteredCampings(data);
       // 첫 페이지 표시
-      setVisibleCampings(data.data.slice(0, itemsPerPage));
-      setDoNmList([...new Set(data.data.map((c) => c.doNm).filter(Boolean))]);
+      setVisibleCampings(data.slice(0, itemsPerPage));
+
+      setDoNmList([...new Set(data.map((c) => c.doNm).filter(Boolean))]);
+      console.log("캠핑 데이터:", data);
     } catch (error) {
       console.error("전체 목록 로딩 실패:", error);
     }
