@@ -1,16 +1,38 @@
-# React + Vite
+🏕 캠핑가자 – Camping Search App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+고캠핑 API를 사용하여서 한국의 캠핑장을 검색하고, 지도에서 위치를 확인하며, 상세 정보를 볼 수 있는 반응형 웹 애플리케이션입니다.
 
-Currently, two official plugins are available:
+📌 주요 기능 (Features)
+🔍 캠핑장 검색
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+이름 / 주소 검색 기능
 
-## React Compiler
+시/도 → 시군구 단계별 필터
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+검색 키워드 + 지역 필터 조합 가능
 
-## Expanding the ESLint configuration
+🏕 캠핑장 목록
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+무한 스크롤(INFINITE SCROLL) 적용
+
+반응형 카드 UI
+
+캠핑장 이미지 / 이름 / 주소 / 전화번호 표시
+
+📄 캠핑장 상세 페이지
+
+대표 이미지 크게 표시
+
+주소, 지도 링크, 기타 상세 정보 출력
+
+"캠핑장 목록으로" 버튼 제공
+
+🌈Weather API를 이용한 캠핑장의 온도,습도,바람세기 표시
+
+📍 카카오 지도 연동(카카오 지도 API)
+
+지도에 마커 표시
+
+마커 클릭 시 인포윈도우(캠핑장 이름 + 주소)
+
+선택된 마커는 노란색으로 강조
