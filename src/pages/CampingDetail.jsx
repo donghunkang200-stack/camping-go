@@ -136,7 +136,7 @@ export default function CampingDetail() {
           <span style="font-size:12px; color:#555;">
             ${place.road_address_name || place.address_name}
           </span><br/>
-          <a href="https://map.kakao.com/link/map/${place.id}" target="_blank"
+          <a href="https://map.kakao.com/?itemId=${place.id}" target="_blank"
             style="font-size:12px; color:#1e90ff;">
             🔗 지도에서 보기
           </a>
@@ -295,7 +295,7 @@ export default function CampingDetail() {
         <span style="font-size:12px; color:#555;">
           ${address}
         </span><br/>
-        <a href="https://map.kakao.com/link/map/${id}" target="_blank"
+        <a href="https://map.kakao.com/?itemId=${id}" target="_blank"
             style="font-size:12px; color:#1e90ff;">
             🔗 지도에서 보기
           </a>
