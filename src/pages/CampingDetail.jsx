@@ -22,9 +22,9 @@ export default function CampingDetail() {
 
   const markerIcons = {
     campMain: "/campingsite.png",
-    nearby: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-    recommend: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-    selected: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
+    nearby: "/blue-location.png",
+    recommend: "/blue-location.png",
+    selected: "/yellow-location.png",
   };
 
   //마커 이미지 생성
