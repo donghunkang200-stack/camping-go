@@ -49,7 +49,7 @@ async function loadCampingData() {
  */
 export const getAllCamping = async (req, res) => {
     const data = await loadCampingData();
-    res.json(data);
+    res.json({ data });
 };
 
 /**

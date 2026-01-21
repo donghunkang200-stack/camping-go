@@ -26,12 +26,17 @@ export default function CampingList() {
   const loadAllCampings = async () => {
     setIsLoading(true);
     try {
-      const data = await getAllCamping();
-      setAllCampings(data); // 원본 데이터 보관
-      setFilteredCampings(data); // 검색 결과 초기화
-      setVisibleCampings(data.slice(0, itemsPerPage)); // 화면에 보일 첫 페이지 슬라이싱
-      // 지역(도) 목록 추출 (중복 제거)
-      setDoNmList([...new Set(data.map((c) => c.doNm).filter(Boolean))]);
+      const res = await getAllCamping();
+      const data = res.data; // 서버에서 { data: [...] } 형태로 보내므로 배열만 추출
+
+      if (Array.isArray(data)) {
+        setAllCampings(data);
+        setFilteredCampings(data);
+        setVisibleCampings(data.slice(0, itemsPerPage));
+        setDoNmList([...new Set(data.map((c) => c.doNm).filter(Boolean))]);
+      } else {
+        console.error("캠핑 데이터가 배열 형식이 아닙니다:", data);
+      }
     } catch (error) {
       console.error("전체 목록 로딩 실패:", error);
     } finally {

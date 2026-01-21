@@ -25,6 +25,19 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// 응답 가로채기: 서버 응답 객체에서 데이터만 추출하여 반환합니다.
+api.interceptors.response.use(
+  (response) => {
+    // Axios의 response.data가 실제 서버에서 보낸 JSON 바디입니다.
+    return response.data;
+  },
+  (error) => {
+    // 에러 발생 시 공통 에러 메시지 처리
+    const message = error.response?.data?.message || error.message || "요청 중 오류가 발생했습니다.";
+    return Promise.reject(new Error(message));
+  }
+);
+
 /**
  * 2. 공통 인증 서비스
  * 회원가입 및 로그인 요청을 담당합니다.
@@ -32,23 +45,11 @@ api.interceptors.request.use(
 export const apiService = {
   // 로그인 요청
   login: async (username, password) => {
-    try {
-      const response = await api.post("/login", { username, password });
-      return response.data;
-    } catch (error) {
-      const message = error.response?.data?.message || "로그인에 실패했습니다.";
-      throw new Error(message);
-    }
+    return api.post("/login", { username, password });
   },
   // 회원가입 요청
   register: async (username, password) => {
-    try {
-      const response = await api.post("/register", { username, password });
-      return response.data;
-    } catch (error) {
-      const message = error.response?.data?.message || "회원가입에 실패했습니다.";
-      throw new Error(message);
-    }
+    return api.post("/register", { username, password });
   },
 };
 
