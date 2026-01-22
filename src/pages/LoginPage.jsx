@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiService } from "../api/api";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuthStore } from "../store/useAuthStore";
 import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   /**
@@ -24,7 +24,7 @@ const LoginPage = () => {
       const token = response?.token || response?.data?.token;
 
       if (token) {
-        // AuthContext의 login 함수를 사용하여 전역 상태를 업데이트합니다.
+        // useAuthStore의 login 함수를 사용하여 전역 상태를 업데이트합니다.
         login(token, username);
         toast.success("성공적으로 로그인했습니다!");
         // 로그인 성공 후 캠핑장 목록 페이지로 이동합니다.

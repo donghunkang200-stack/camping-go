@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuthStore } from "../store/useAuthStore";
 
 /**
  * 전체 서비스의 공통 레이아웃을 담당하는 컴포넌트입니다.
  * 모든 페이지에서 공통적으로 보여지는 헤더(네비게이션 바)와 푸터를 포함합니다.
  */
 export const Layout = ({ children }) => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const navigate = useNavigate();
 
   /**

@@ -1,5 +1,6 @@
 // src/api/api.js
 import axios from "axios";
+import { useAuthStore } from "../store/useAuthStore";
 
 /**
  * 1. Axios 인스턴스 설정
@@ -16,7 +17,8 @@ const api = axios.create({
 // 요청 가로채기: 모든 요청 헤더에 JWT 토큰을 자동으로 추가합니다.
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("auth_token");
+    // Zustand 스토어에서 최신 토큰을 가져옵니다.
+    const token = useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`; // 서버에서 인증할 수 있도록 Bearer 토큰 삽입
     }

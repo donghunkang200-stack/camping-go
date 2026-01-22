@@ -5,7 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useEffect } from "react";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { useAuthStore } from "./store/useAuthStore";
 import { Layout } from "./components/Layout";
 import { ToastContainer } from "react-toastify";
 import ScrollToTop from "./components/ScrollToTop";
@@ -21,7 +21,7 @@ import RegisterPage from "./pages/RegisterPage";
  * 비로그인 사용자가 접근 시 로그인 페이지로 강제 이동시킵니다.
  */
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
@@ -31,7 +31,7 @@ const ProtectedRoute = ({ children }) => {
  * 자동으로 캠핑장 목록 페이지로 돌려보내는 기능입니다.
  */
 const AuthRedirect = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuthStore();
   return isAuthenticated ? <Navigate to="/camping" replace /> : <>{children}</>;
 };
 
@@ -90,7 +90,7 @@ const AppRoutes = () => {
 
 /**
  * 4. 메인 App 컴포넌트
- * 카카오맵 SDK 로드 및 전역 Provider(AuthProvider, Layout 등)를 초기화합니다.
+ * 카카오맵 SDK 로드 및 전역 Provider(Layout 등)를 초기화합니다.
  */
 const App = () => {
   // 앱 실행 시 카카오맵 SDK를 동적으로 로드합니다.
@@ -111,14 +111,12 @@ const App = () => {
     <Router>
       {/* 페이지 이동 시마다 스크롤을 맨 위로 초기화 */}
       <ScrollToTop />
-      <AuthProvider>
-        {/* 전체 레이아웃 (네비게이션 바, 푸터 포함) */}
-        <Layout>
-          <AppRoutes />
-        </Layout>
-        {/* 전역 알림(토스트) 메시지 설정 */}
-        <ToastContainer position="top-center" autoClose={3000} theme="light" />
-      </AuthProvider>
+      {/* 전체 레이아웃 (네비게이션 바, 푸터 포함) */}
+      <Layout>
+        <AppRoutes />
+      </Layout>
+      {/* 전역 알림(토스트) 메시지 설정 */}
+      <ToastContainer position="top-center" autoClose={3000} theme="light" />
     </Router>
   );
 };

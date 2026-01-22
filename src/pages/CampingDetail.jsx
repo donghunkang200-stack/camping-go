@@ -537,7 +537,7 @@ export default function CampingDetail() {
                 { id: "CE7", label: "카페" },
                 { id: "AT4", label: "명소" },
                 { id: "CS2", label: "편의점" },
-                { id: "RECOMMEND", label: "추천캠핑" },
+                { id: "RECOMMEND", label: "주변 캠핑장" },
               ].map((tab) => (
                 <button
                   key={tab.id}
