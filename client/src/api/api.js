@@ -6,8 +6,19 @@ import { useAuthStore } from "../store/useAuthStore";
  * 1. Axios 인스턴스 설정
  * 모든 API 요청의 기본 URL과 가로채기(Interceptor) 로직을 정의합니다.
  */
+const getBaseUrl = () => {
+  let url = import.meta.env.VITE_API_BASE || "";
+  // 1. 끝에 있는 슬래시 제거
+  url = url.replace(/\/$/, "");
+  // 2. /api가 이미 포함되어 있으면 그대로 사용, 없으면 추가
+  if (url.endsWith("/api")) {
+    return url;
+  }
+  return url ? `${url}/api` : "/api";
+};
+
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_BASE || ""}/api`, // 환경 변수(http://localhost:5000) 뒤에 /api 추가
+  baseURL: getBaseUrl(),
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

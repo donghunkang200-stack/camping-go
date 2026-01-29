@@ -29,6 +29,8 @@ git push origin main
     *   (Vite 빌드 명령어)
 *   **Publish directory**: `dist`
     *   (Vite가 빌드 결과물을 생성하는 폴더이므로 `build`가 아닌 `dist`여야 합니다.)
+*   **Functions directory**: 빈칸 유지
+    *   (Netlify의 서버리스 기능을 쓰지 않으므로 비워두세요.)
 
 ## 4단계: 환경 변수 설정 (Environment Variables)
 
