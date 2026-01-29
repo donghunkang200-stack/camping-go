@@ -1,18 +1,25 @@
 # 🏕️ 캠핑가자 (Camping Search App)
 
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![Zustand](https://img.shields.io/badge/zustand-%2320232a.svg?style=for-the-badge&logo=react&logoColor=white)
+
 **캠핑가자**는 공공데이터 포털의 **고캠핑(GoCamping) API**를 활용하여 전국의 캠핑장 정보를 한눈에 확인하고, 최적의 캠핑 장소를 찾을 수 있도록 돕는 프리미엄 캠핑 검색 플랫폼입니다.
 
 ---
 
-## � 주요 기능 (Key Features)
+## ✨ 주요 기능 (Key Features)
 
-### � 인증 및 보안 (Auth & Security)
+### 🔐 인증 및 보안 (Auth & Security)
 - **JWT 기반 인증**: 로그인 및 회원가입 기능을 통해 나만의 캠핑 데이터를 안전하게 관리합니다.
 - **접근 제어**: 로그인을 완료한 사용자만 캠핑장 검색 및 상세 정보를 확인할 수 있도록 보호된 라우트(Protected Routes)를 적용했습니다.
 
 ### 🔍 스마트 검색 및 필터링 (Search & Filtering)
 - **실시간 디바운스 검색**: 타이핑과 동시에 결과를 보여주되, 서버 부하를 최소화하는 디바운스(Debounce) 기법을 적용했습니다.
 - **지역별 상세 필터**: '시/도'와 '시/군/구'를 연동하여 원하는 지역의 캠핑장을 쉽고 빠르게 필터링할 수 있습니다.
+- **내 주변 캠핑장 찾기**: 사용자의 현재 위치(위도/경도)를 기반으로 가까운 캠핑장을 계산하여 추천해줍니다. (Haversine 공식 활용)
 
 ### ⛺ 캠핑장 탐색 (Exploration)
 - **무한 스크롤 (Infinite Scroll)**: Intersection Observer를 활용하여 끊김 없는 사용자 경험을 제공합니다.
@@ -30,17 +37,22 @@
 ## 🛠️ 기술 스택 (Tech Stack)
 
 ### Frontend
-- **Framework**: React 19 (Vite)
-- **Styling**: Tailwind CSS v4 (Modern Design System)
-- **Routing**: React Router 7
-- **State Management**: Context API (Auth)
-- **Icons & Toast**: React Toastify, Emoji-based Icons
+| Category | Technology |
+|----------|------------|
+| **Framework** | React 19 (Vite) |
+| **Styling** | Tailwind CSS v4 (Modern Design System) |
+| **State Management** | **Zustand** (Global Store & Persist) |
+| **Routing** | React Router 7 |
+| **Icons & UI** | React Toastify, Emoji-based Icons |
 
 ### Backend
-- **Runtime**: Node.js (Express)
-- **Database**: MongoDB (Mongoose)
-- **Auth**: JWT (jsonwebtoken), Password Hashing (bcryptjs)
-- **Proxy**: Vite Proxy Configuration (Backend Integration)
+| Category | Technology |
+|----------|------------|
+| **Runtime** | Node.js (Express) |
+| **Database** | MongoDB (Mongoose) |
+| **Auth** | JWT (jsonwebtoken), Password Hashing (bcryptjs) |
+| **Optimization** | **In-Memory Caching** (API 요청 최적화) |
+| **Integration** | Vite Proxy Configuration |
 
 ### External APIs
 - **Camping Data**: 공공데이터포털 고캠핑 API
@@ -56,12 +68,12 @@ camping-search/
 ├── src/
 │   ├── api/            # Axios API 서비스 (인증 및 캠핑 데이터)
 │   ├── components/     # 공통 레이아웃, 스켈레톤, 스크롤 컴포넌트
-│   ├── contexts/       # AuthContext (로그인 상태 관리)
 │   ├── pages/          # 홈, 로그인, 회원가입, 목록, 상세 페이지
+│   ├── store/          # Zustand 스토어 (Auth 상태 관리)
 │   └── index.css       # Tailwind v4 디자인 시스템 정의
 ├── server/
-│   ├── controllers/    # 비즈니스 로직 (Auth, Camping)
-│   ├── models/         # MongoDB 모델 (User) 및 캐시 데이터
+│   ├── controllers/    # 비즈니스 로직 (Auth, Camping - Caching 적용)
+│   ├── models/         # MongoDB 모델 (User) 및 인메모리 데이터 캐시
 │   ├── routes/         # API 경로 설정
 │   └── index.js        # 서버 진입점 및 DB 연결
 └── package.json        # 종속성 및 스크립트 설정
@@ -84,10 +96,18 @@ camping-search/
    ```
 
 3. **환경 변수 설정 (`.env`)**
-   - `VITE_KAKAO_JS_KEY`: 카카오맵 JavaScript 키
-   - `VITE_WEATHER_API_KEY`: OpenWeather API 키
-   - `GOCAMPING_KEY`: 고캠핑 서비스 키
-   - `MONGODB_URI`: MongoDB 연결 문자열
+   프로젝트 루트에 `.env` 파일을 생성하고 다음 키를 설정하세요.
+   ```env
+   VITE_KAKAO_JS_KEY=your_kakao_key
+   VITE_WEATHER_API_KEY=your_weather_key
+   ```
+   
+   서버 폴더(`server/.env`) 설정:
+   ```env
+   GOCAMPING_KEY=your_gocamping_key
+   MONGODB_URI=your_mongodb_uri
+   JWT_SECRET=your_jwt_secret
+   ```
 
 4. **실행**
    ```bash
