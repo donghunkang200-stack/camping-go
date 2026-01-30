@@ -12,12 +12,20 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 0. MongoDB 연결 설정
-mongoose.connect(process.env.MONGODB_URI)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => console.log("✅ MongoDB 연결 성공!"))
   .catch((err) => console.error("❌ MongoDB 연결 실패:", err));
 
 // 1. 공통 미들웨어 설정
-app.use(cors());
+// CORS 설정: Netlify 배포 도메인만 허용하고 preflight(OPTIONS) 처리
+const corsOptions = {
+  origin: "https://camping-go.netlify.app",
+  optionsSuccessStatus: 200, // 일부 구형 브라우저에서 204를 처리하지 못하는 문제 방지
+  // credentials: true, // 쿠키/인증이 필요하면 주석 해제하고 클라이언트에서 withCredentials 설정
+};
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json());
 
 // 1.5. 서버 상태 확인용 (Health Check)
@@ -33,4 +41,6 @@ app.use("/api", authRoutes);
 app.use("/api/camping", campingRoutes);
 
 // 3. 서버 포트 실행
-app.listen(PORT, () => console.log(`🚀 서버가 포트 ${PORT}에서 실행 중입니다.`));
+app.listen(PORT, () =>
+  console.log(`🚀 서버가 포트 ${PORT}에서 실행 중입니다.`),
+);
