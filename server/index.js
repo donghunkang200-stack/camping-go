@@ -19,18 +19,16 @@ mongoose
 
 // 1. 공통 미들웨어 설정
 // CORS 설정: Netlify 배포 도메인 및 로컬 개발(Dev) 도메인 허용
-const allowedOrigins = [
-  "https://camping-go.netlify.app",
-  "https://entitled-diannne-kdhkoyebserver-b42d2adb.koyeb.app", // Self (optional but safe)
-];
+// CORS 설정: 디버깅을 위해 모든 출처 허용 (보안상 나중에 특정 도메인으로 제한 필요)
+const allowedOrigins = ["*"];
 
-if (process.env.NODE_ENV !== "production") {
-  // 개발 중 로컬 Vite 서버에서 테스트할 때 사용 (http://localhost:5173)
-  allowedOrigins.push("http://localhost:5173");
-}
+// if (process.env.NODE_ENV !== "production") {
+//   // 개발 중 로컬 Vite 서버에서 테스트할 때 사용 (http://localhost:5173)
+//   allowedOrigins.push("http://localhost:5173");
+// }
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: true, // true로 설정하면 요청한 Origin을 그대로 반사하여 허용함 (credentials: true와 함께 사용 시 필수)
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true, // 쿠키/인증 헤더 허용
