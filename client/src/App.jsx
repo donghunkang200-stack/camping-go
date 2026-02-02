@@ -54,14 +54,10 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      {/* ⛺ 캠핑상세 (로그인 필수) */}
+      {/* ⛺ 캠핑상세 (공개 접근 허용) */}
       <Route
         path="/detail/:id"
-        element={
-          <ProtectedRoute>
-            <CampingDetail />
-          </ProtectedRoute>
-        }
+        element={<CampingDetail />}
       />
 
       {/* 🔐 인증 관련 페이지 */}

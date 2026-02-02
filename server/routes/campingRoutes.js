@@ -11,7 +11,8 @@ import { authenticateToken } from "../middleware/auth.js";
 const router = express.Router();
 
 // 모든 캠핑 경로는 로그인 토큰 인증이 필요합니다.
-router.use(authenticateToken);
+// 모든 캠핑 경로는 로그인 토큰 인증이 필요합니다. -> 공개로 변경
+// router.use(authenticateToken);
 
 // 1. 전체 캠핑장 목록 조회
 router.get("/all", getAllCamping);
