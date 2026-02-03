@@ -5,6 +5,10 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import campingRoutes from "./routes/campingRoutes.js";
+import {
+  loadCampingData,
+  CACHE_DURATION,
+} from "./controllers/campingController.js";
 
 dotenv.config();
 
@@ -56,3 +60,23 @@ app.use("/api/camping", campingRoutes);
 app.listen(PORT, () =>
   console.log(`🚀 서버가 포트 ${PORT}에서 실행 중입니다.`),
 );
+
+// 4. 캠핑 데이터 캐시 선로딩 및 주기 갱신 설정
+(async () => {
+  try {
+    await loadCampingData();
+    console.log("✅ 캠핑 데이터 캐시 선로딩 완료");
+  } catch (err) {
+    console.error("❌ 캐시 선로딩 실패:", err);
+  }
+
+  const intervalMs = Number(process.env.CACHE_REFRESH_MS) || CACHE_DURATION;
+  setInterval(async () => {
+    try {
+      await loadCampingData();
+      console.log("🔄 캠핑 데이터 캐시 갱신 완료");
+    } catch (err) {
+      console.error("❌ 캐시 갱신 실패:", err);
+    }
+  }, intervalMs);
+})();
