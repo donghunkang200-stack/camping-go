@@ -8,6 +8,9 @@
 
 **캠핑가자**는 공공데이터 포털의 **고캠핑(GoCamping) API**를 활용하여 전국의 캠핑장 정보를 한눈에 확인하고, 최적의 캠핑 장소를 찾을 수 있도록 돕는 프리미엄 캠핑 검색 플랫폼입니다.
 
+- **🚀 Live Demo**: [https://camping-go.netlify.app](https://camping-go.netlify.app)
+- **📂 Portfolio**: [https://camping-go.netlify.app/portfolio.html](https://camping-go.netlify.app/portfolio.html)
+
 ---
 
 ## ✨ 주요 기능 (Key Features)
@@ -68,7 +71,7 @@
 
 ---
 
-## � 백엔드 캐시 및 데이터 갱신 (Backend Caching & Refresh)
+## ⚡ 백엔드 캐시 및 데이터 갱신 (Backend Caching & Refresh)
 
 - 서버 시작 시 외부 고캠핑 API로부터 전체 목록을 **선로딩(preload)** 하여, 첫 요청 시에도 빠른 응답을 보장합니다.
 - 기본적으로 **30분**(`CACHE_DURATION = 1000 * 60 * 30`)마다 캐시를 자동 갱신합니다. 갱신 주기는 환경변수로 오버라이드 가능합니다:
@@ -86,7 +89,7 @@ CACHE_REFRESH_MS=1800000
 
 ---
 
-## �📁 프로젝트 구조 (Folder Structure)
+## 📁 프로젝트 구조 (Folder Structure)
 
 ```text
 camping-search/
@@ -103,7 +106,8 @@ camping-search/
 │   ├── models/
 │   ├── routes/
 │   └── index.js
-└── package.json        # 통합 관리 스크립트
+├── package.json        # 통합 관리 스크립트
+└── README.md
 ```
 
 ---
@@ -143,11 +147,8 @@ camping-search/
 
 ## 🎯 포트폴리오 페이지 (Portfolio Page)
 
+- **Live Portfolio**: [https://camping-go.netlify.app/portfolio.html](https://camping-go.netlify.app/portfolio.html)
 - **로컬 미리보기**: 개발 서버 실행 후 http://localhost:5173/portfolio.html 에서 확인할 수 있습니다.
-- **포함 내용**: 한 줄 소개, 핵심 기능 요약, 핵심 파일 링크, 실행 방법 및 커스터마이즈 가이드(스크린샷/GIF 교체).
-- **위치**: `client/public/portfolio.html` 및 `client/public/portfolio.css` (정적 페이지로 배포 가능).
-
-> 팁: 배포 환경에 따라 정적 파일을 호스팅하면 경로가 바뀔 수 있으므로 배포 전에 경로를 한 번 확인하세요.
 
 ---
 
