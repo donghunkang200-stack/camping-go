@@ -8,8 +8,8 @@
 
 **캠핑가자**는 공공데이터 포털의 **고캠핑(GoCamping) API**를 활용하여 전국의 캠핑장 정보를 한눈에 확인하고, 최적의 캠핑 장소를 찾을 수 있도록 돕는 프리미엄 캠핑 검색 플랫폼입니다.
 
-- **🚀 Live Demo**: [https://camping-go.netlify.app](https://camping-go.netlify.app)
-- **📂 Portfolio**: [https://camping-go.netlify.app/portfolio.html](https://camping-go.netlify.app/portfolio.html)
+- **🚀 배포사이트**: [https://camping-go.netlify.app](https://camping-go.netlify.app)
+- **📂 포트폴리오**: [https://camping-go.netlify.app/portfolio.html](https://camping-go.netlify.app/portfolio.html)
 
 ---
 

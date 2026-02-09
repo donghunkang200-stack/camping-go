@@ -6,34 +6,47 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "xkvosaifjaojflwejflwejlj123j12l3j11l";
+// JWT Secret 검증 (환경 변수 필수)
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    throw new Error("❌ JWT_SECRET 환경 변수가 설정되지 않았습니다.");
+}
 
-/**
- * 회원가입 처리
- * @param {Object} req - Express request 객체 (name, username, email, password 포함)
- * @param {Object} res - Express response 객체
- */
+// 회원가입 처리
 export const register = async (req, res) => {
     console.log("--- 회원가입 시도 ---");
     console.log("아이디:", req.body.username);
     try {
         const { name, username, email, password } = req.body;
 
-        // 1. 필수 입력값 검증
+        // 필수 입력값 검증
         if (!username || !password) {
             return res.status(400).json({ message: "아이디와 비밀번호를 입력해주세요." });
         }
 
-        // 2. 아이디 중복 확인 (MongoDB에서 조회)
+        // 이메일 형식 검증
+        if (email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return res.status(400).json({ message: "유효하지 않은 이메일 형식입니다." });
+            }
+        }
+
+        // 비밀번호 강도 검증
+        if (password.length < 8) {
+            return res.status(400).json({ message: "비밀번호는 최소 8자 이상이어야 합니다." });
+        }
+
+        // 아이디 중복 확인
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             return res.status(400).json({ message: "이미 존재하는 아이디입니다." });
         }
 
-        // 3. 비밀번호 보안을 위한 해싱 (가중치 10)
+        // 비밀번호 해싱
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 4. 새 사용자 생성 및 DB 저장
+        // 새 사용자 생성 및 저장
         const newUser = new User({
             name,
             username,
@@ -50,28 +63,24 @@ export const register = async (req, res) => {
     }
 };
 
-/**
- * 로그인 처리 및 JWT 토큰 발급
- * @param {Object} req - Express request 객체 (username, password 포함)
- * @param {Object} res - Express response 객체
- */
+// 로그인 처리 및 JWT 토큰 발급
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // 1. 사용자 존재 여부 확인
+        // 사용자 존재 여부 확인
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(401).json({ message: "아이디 또는 비밀번호가 틀렸습니다." });
         }
 
-        // 2. 입력된 비밀번호와 해싱된 비밀번호 비교
+        // 비밀번호 검증
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: "아이디 또는 비밀번호가 틀렸습니다." });
         }
 
-        // 3. 인증 성공 시 JWT 토큰 생성 (유효기간 1일)
+        // JWT 토큰 생성 (유효기간 1일)
         const token = jwt.sign({ username: user.username }, JWT_SECRET, {
             expiresIn: "1d",
         });

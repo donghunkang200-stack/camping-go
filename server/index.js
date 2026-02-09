@@ -21,47 +21,46 @@ mongoose
   .then(() => console.log("✅ MongoDB 연결 성공!"))
   .catch((err) => console.error("❌ MongoDB 연결 실패:", err));
 
-// 1. 공통 미들웨어 설정
-// CORS 설정: Netlify 배포 도메인 및 로컬 개발(Dev) 도메인 허용
-// CORS 설정: 디버깅을 위해 모든 출처 허용 (보안상 나중에 특정 도메인으로 제한 필요)
-const allowedOrigins = ["*"];
-
-// if (process.env.NODE_ENV !== "production") {
-//   // 개발 중 로컬 Vite 서버에서 테스트할 때 사용 (http://localhost:5173)
-//   allowedOrigins.push("http://localhost:5173");
-// }
+// CORS 설정: 환경별 허용 도메인 관리
+const allowedOrigins = [
+  process.env.CLIENT_URL || "https://camping-go.netlify.app",
+  process.env.NODE_ENV === "development" ? "http://localhost:5173" : null,
+].filter(Boolean);
 
 const corsOptions = {
-  origin: true, // true로 설정하면 요청한 Origin을 그대로 반사하여 허용함 (credentials: true와 함께 사용 시 필수)
+  origin: (origin, callback) => {
+    // 브라우저가 아닌 요청(Postman 등) 또는 허용된 도메인인 경우 허용
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS 정책에 의해 차단되었습니다."));
+    }
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // 쿠키/인증 헤더 허용
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-// Preflight 요청에 대한 명시적 처리 (일부 환경 호환성 위함)
 app.options("*", cors(corsOptions));
 app.use(express.json());
 
-// 1.5. 서버 상태 확인용 (Health Check)
+// Health Check
 app.get("/", (req, res) => {
   res.send("Hello! Camping Server is running correctly. 🚀");
 });
 
-// 2. 통합 백엔드 라우터 연결
-// - 인증 관련 (/api/register, /api/login)
+// API 라우트 연결
 app.use("/api", authRoutes);
-
-// - 캠핑 데이터 관련 (/api/camping/all 등)
 app.use("/api/camping", campingRoutes);
 
-// 3. 서버 포트 실행
+// 서버 실행
 app.listen(PORT, () =>
   console.log(`🚀 서버가 포트 ${PORT}에서 실행 중입니다.`),
 );
 
-// 4. 캠핑 데이터 캐시 선로딩 및 주기 갱신 설정
+// 캠핑 데이터 캐시 초기화 및 주기적 갱신
 (async () => {
   try {
     await loadCampingData();
