@@ -24,7 +24,7 @@ mongoose
 // CORS 설정: 환경별 허용 도메인 관리
 const allowedOrigins = [
   process.env.CLIENT_URL || "https://camping-go.netlify.app",
-  process.env.NODE_ENV === "development" ? "http://localhost:5173" : null,
+  "http://localhost:5173", // 로컬 개발 환경
 ].filter(Boolean);
 
 const corsOptions = {
