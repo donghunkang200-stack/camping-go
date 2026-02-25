@@ -6,7 +6,7 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Zustand](https://img.shields.io/badge/zustand-%2320232a.svg?style=for-the-badge&logo=react&logoColor=white)
 
-**캠핑가자**는 공공데이터 포털의 **고캠핑(GoCamping) API**를 활용하여 전국의 캠핑장 정보를 한눈에 확인하고, 최적의 캠핑 장소를 찾을 수 있도록 돕는 프리미엄 캠핑 검색 플랫폼입니다.
+**캠핑가자**는 공공데이터 포털의 **고캠핑(GoCamping) API**를 활용하여 전국의 캠핑장 정보를 한눈에 확인하고, 최적의 캠핑 장소를 찾을 수 있도록 돕는 캠핑 검색 플랫폼입니다.
 
 - **🚀 배포사이트**: [https://camping-go.netlify.app](https://camping-go.netlify.app)
 - **📂 포트폴리오**: [https://camping-go.netlify.app/portfolio.html](https://camping-go.netlify.app/portfolio.html)
@@ -19,6 +19,11 @@
 
 - **JWT 기반 인증**: 로그인 및 회원가입 기능을 통해 나만의 캠핑 데이터를 안전하게 관리합니다.
 - **접근 제어**: 로그인을 완료한 사용자만 캠핑장 검색 및 상세 정보를 확인할 수 있도록 보호된 라우트(Protected Routes)를 적용했습니다.
+- **강화된 보안**:
+  - CORS 정책으로 허용된 도메인만 API 접근 가능
+  - JWT Secret 환경 변수 필수 설정으로 보안 강화
+  - 이메일 형식 및 비밀번호 강도 검증
+  - 비밀번호 해싱(bcryptjs) 적용
 
 ### 🔍 스마트 검색 및 필터링 (Search & Filtering)
 
@@ -128,9 +133,34 @@ camping-search/
    npm run install:all
    ```
 
-3. **환경 변수 설정 (`.env`)**
-   - `client/.env`: 프론트엔드 설정 (API 키 등)
-   - `server/.env`: 백엔드 설정 (DB URI 등)
+3. **환경 변수 설정**
+
+   각 디렉토리에 `.env.example` 파일을 참고하여 `.env` 파일을 생성하세요:
+
+   **클라이언트 (`client/.env`)**:
+
+   ```bash
+   # 로컬 개발 시
+   VITE_API_BASE=http://localhost:5000
+
+   # 프로덕션 배포 시 (백엔드 URL로 변경)
+   # VITE_API_BASE=https://your-backend-url.com
+
+   VITE_KAKAO_JS_KEY=your_kakao_js_key
+   VITE_WEATHER_API_KEY=your_openweather_api_key
+   ```
+
+   **서버 (`server/.env`)**:
+
+   ```bash
+   GOCAMPING_KEY=your_gocamping_api_key
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_secure_random_string  # 필수!
+   CLIENT_URL=https://camping-go.netlify.app
+   ```
+
+   > ⚠️ **중요**: `JWT_SECRET`은 보안을 위해 반드시 설정해야 합니다.
+   > 안전한 랜덤 문자열 생성: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
 
 4. **실행**
 
@@ -142,13 +172,6 @@ camping-search/
    npm run dev:server
    npm run dev:client
    ```
-
----
-
-## 🎯 포트폴리오 페이지 (Portfolio Page)
-
-- **Live Portfolio**: [https://camping-go.netlify.app/portfolio.html](https://camping-go.netlify.app/portfolio.html)
-- **로컬 미리보기**: 개발 서버 실행 후 http://localhost:5173/portfolio.html 에서 확인할 수 있습니다.
 
 ---
 
